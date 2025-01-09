@@ -2,7 +2,6 @@
   "name": "influencer_verificator_back",
   "version": "1.0.0",
   "main": "src/server.js",
-  "type": "module",
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
