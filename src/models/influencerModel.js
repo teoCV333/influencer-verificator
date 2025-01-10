@@ -1,12 +1,10 @@
 const mongoose = require("mongoose");
 
-const influencerSchema = new mongoose.Schema(
-    {
+const influencerSchema = new mongoose.Schema({
       name: {
         type: String,
-        required: true,
         unique: true,
-        trim: true,
+        required: true,
       },
       description: {
         type: String,
@@ -19,7 +17,8 @@ const influencerSchema = new mongoose.Schema(
       claims: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Claims'
+            ref: 'Claims',
+            required: false
         }
       ],
       totalAverageFollowers: {

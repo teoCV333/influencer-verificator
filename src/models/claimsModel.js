@@ -1,7 +1,11 @@
-import mongoose from 'mongoose';
+const mongoose = require("mongoose");
 
 const claimsSchema = new mongoose.Schema(
   {
+    claim: {
+      type: String,
+      required: true
+    },
     datePosted: {
       type: Date,
       required: true
@@ -10,11 +14,15 @@ const claimsSchema = new mongoose.Schema(
         type: [String],
         required: true,
     },
-    verify_status: {
+    status: {
       type: String,
       enum: ['Verified', 'Questionable', 'Debunked'],
-      required: true,
+      required: false,
     },
+    sources: {
+      type: [String],
+      required: false
+    }
   },
   {
     timestamps: false,
