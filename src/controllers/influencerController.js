@@ -1,23 +1,41 @@
 const influencerService = require("../services/influencerService");
+const { customHandleError } = require("../utils/errorHandler");
+const { getInfluencerByNameSchema } = require("../validators/influencerValidator");
 const {genericResponse} = require("../utils/genericResponse");
 class InfluencerController {
 
     async getAllInfluencers(req, res) {
         try {
-            const result = await influencerService.getAllInfluencers();
-            res.status(201).json(result);
+            const influencers = await influencerService.getAllInfluencers();
+            return genericResponse(res, influencers);
         } catch (err) {
-            res.status(500).json({ message: err.message })
+            return customHandleError(res, err);
         }
     }
 
     async getInfluencerByName(req, res) {
         try {
-            const influencer = await influencerService.getInfluencerByName(req.params);
-            const result = genericResponse(influencer);
-            res.status(result.status.code).json(result);
+            const params = {
+                name: req.params.name,
+                filter: req.query.filter || undefined,
+                token: req.headers.authorization?.split(" ")[1]
+            }
+
+            const {error} = getInfluencerByNameSchema.validate(params);
+
+            if(error) {
+                const errorResponse = {
+                    status: 401,
+                    message: error.details[0].message
+                };
+                return customHandleError(res, errorResponse);
+            }
+
+            const influencer = await influencerService.getInfluencerByName(params);
+           
+            return genericResponse(res, influencer);
         } catch (err) {
-            res.status(500).json({ message: err.message })
+            return customHandleError(res, err);
         }
     }
 

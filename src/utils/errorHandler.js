@@ -1,4 +1,13 @@
-exports.handleError = (res, error) => {
+const { genericResponse } = require("./genericResponse");
+
+const customHandleError = (res, error) => {
     console.error(error);
-    res.status(500).json({ message: error.message || "Internal Server Error" });
+    result = {
+        statusCode: error.status || 500,
+        message: error.message || "Internal Error"
+    }
+
+    return genericResponse(res, result);
 };
+
+module.exports = { customHandleError }

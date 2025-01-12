@@ -4,6 +4,6 @@ const router = express.Router();
 const influencerController = require("../controllers/influencerController");
 
 router.get("/", influencerController.getAllInfluencers);
-router.get("/:name/:filter/:token", influencerController.getInfluencerByName);
+router.get("/:name", influencerController.getInfluencerByName);
 
 module.exports = router;

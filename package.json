@@ -14,6 +14,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "influencer_verificator_back": "file:",
+    "joi": "^17.13.3",
     "mongoose": "^8.9.3"
   },
   "devDependencies": {

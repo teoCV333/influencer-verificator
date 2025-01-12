@@ -3,16 +3,14 @@ const { replaceDynamicValue, parseAssistantResponse } = require("../utils/utils"
 
 class PerplexityService {
 
-    searchInfluencer(inputContent, dateFilter, token) {
-        console.log(prompts["searchInfluencer"])
+    async searchInfluencer(inputContent, dateFilter, token) {
         const promptContent = replaceDynamicValue(prompts["searchInfluencer"], "<name>", inputContent);
-        console.log(promptContent)
         const params = {
             token, 
             promptContent,
             dateFilter
         };
-        const result = this.generalRequest(params);
+        const result = await this.generalRequest(params);
         return result;
     }
 
@@ -24,13 +22,10 @@ class PerplexityService {
             dateFilter
         };
         const results = await this.generalRequest(params);
-        console.log(results)
         const resultsVerified = await Promise.all(
             results.claims.map(async (claim) => {
                 const verification = await this.verifyClaims(token, claim.claim);
-                console.log(verification)
                 const finalClaim = { ...claim, status: verification.status, sources: verification.sources };
-                console.log(finalClaim)
                 return finalClaim;
             })
         );
