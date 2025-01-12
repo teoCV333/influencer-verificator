@@ -35,7 +35,7 @@ const influencerSchema = new mongoose.Schema({
       },
     },
     {
-      timestamps: false, // Automatically add createdAt and updatedAt fields
+      timestamps: false,
     }
   );
 

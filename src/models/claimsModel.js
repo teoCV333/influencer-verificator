@@ -4,7 +4,8 @@ const claimsSchema = new mongoose.Schema(
   {
     claim: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     datePosted: {
       type: Date,
