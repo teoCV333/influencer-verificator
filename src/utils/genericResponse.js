@@ -1,5 +1,5 @@
 function genericResponse(res, results) {
-    const {data, statusCode, message} = results;
+    const { data, statusCode, message } = results;
     response = {
         status: {
             code: statusCode,
@@ -10,4 +10,4 @@ function genericResponse(res, results) {
     return res.status(statusCode).json(response);
 }
 
-module.exports = {genericResponse}
+module.exports = { genericResponse }
