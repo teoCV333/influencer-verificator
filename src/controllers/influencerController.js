@@ -23,23 +23,31 @@ class InfluencerController {
         }
     }
 
+    async getInfluencerById(req, res) {
+        try {
+            const influencer = await influencerService.getInfluencerById(req.params.id);
+            return genericResponse(res, influencer);
+        } catch (err) {
+            return customHandleError(res, err);
+        }
+    }
+
     async getInfluencerByName(req, res) {
         try {
             const params = {
                 name: req.params.name,
                 filter: req.query.filter || 'month',
-                claimsNumber: req.query.claimsNumber || 50,
+                claimsNumber: req.query.claimsNumber || "50",
                 token: req.headers.authorization?.split(" ")[1]
             }
 
             const { error } = getInfluencerByNameSchema.validate(params);
 
             if (error) {
-                const errorResponse = {
-                    status: 401,
+                return {
+                    statusCode: 401,
                     message: error.details[0].message
                 };
-                return customHandleError(res, errorResponse);
             }
 
             const influencer = await influencerService.getInfluencerByName(params);

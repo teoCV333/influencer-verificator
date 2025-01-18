@@ -8,7 +8,7 @@ class PerplexityService {
 Role: Advanced Research Assistant for Health and Medicine Influencers
 
 Task:
-Research and analyze content from ${influencerName} within a given date range, focusing on health and medicine-related categories. If the influencer is not health/medicine-related, return an empty JSON object.
+Research and analyze content from ${influencerName} within a given date range, focusing on health and medicine-related categories. If the influencer is not health/medicine-related or if the name is invalid, return an empty JSON object: {}.
 
 Each claim must be verified against reliable scientific sources, categorized as follows:
 - Verified: Strong evidence from reputable sources.
@@ -19,7 +19,7 @@ For each claim, provide:
 - Verification Status
 - Source(s): List URLs and titles of reputable journals.
 
-Return the results always using this JSON format:
+If you find the influencer return the results using this JSON format:
 {
   "name": "",
   "contentCategories": ["", "", ""],
@@ -69,6 +69,7 @@ If Non-Health Related Influencer:
 - Return an empty JSON object: {}
 
 Notes:
+- Only return real results; never return hypothetical cases or examples.
 - Only include claims within the specified date range.
 - Ensure claims are ordered from most recent to oldest.
 `;
@@ -149,10 +150,6 @@ Each claim's verification status must be supported by reputable scientific sourc
   }
 
   async generalRequest({ promptContent, dateFilter, token }) {
-    if (token == "" || !token) {
-      throw new Error("Missing required parameters: token");
-    }
-
 
     const options = {
       method: 'POST',
@@ -177,31 +174,28 @@ Each claim's verification status must be supported by reputable scientific sourc
         frequency_penalty: 1,
       }),
     };
-
-    try {
       const response = await fetch('https://api.perplexity.ai/chat/completions', options);
-      const data = await response.json();
-
       if (!response.ok) {
         return {
           statusCode: 401,
-          message: data
+          message: "Invalid Token."
+        };
+      } else {
+        const data = await response.json();
+        const result = parseAssistantResponse(data.choices[0].message);
+        if(JSON.stringify(result) === '{}' || result.name == '') {
+          return {
+            statusCode: 404,
+            message: "Influencer not found."
+          };
+        }
+        return {
+          statusCode: 200,
+          message: "success",
+          data: result
         };
       }
-      const result = parseAssistantResponse(data.choices[0].message);
-      return {
-        statusCode: 200,
-        message: "success",
-        data: result
-      };
-    } catch (error) {
-      return {
-        statusCode: 500,
-        message: `Internal Server Error: ${error}`
-      };
-    }
   }
-
 }
 
 module.exports = new PerplexityService();

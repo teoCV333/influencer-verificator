@@ -46,25 +46,15 @@ class InfluencerService {
 
     async getInfluencerByName(params) {
         try {
-            const influencer = await Influencer.aggregate([
-                { $match: { name: { $regex: new RegExp(params.name, 'i') } } },
-                {
-                    $project: {
-                        name: 1,
-                        contentCategories: 1,
-                        description: 1,
-                        quantityFollowers: 1,
-                        claims: { $sortArray: { input: "$claims", sortBy: { datePosted: -1 } } },
-                        score: 1
-                    }
-                }
-            ]);
+            const normalizedName = params.name.replace(/^Dr\. /, '').trim();
+            const influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${normalizedName}$`, 'i') } });
             if (!influencer || influencer.length == 0) {
                 const searchResults = await this.searchInfluencerWithAI(params);
-                if (!searchResults.statusCode == 200) {
+                if (searchResults.statusCode != 200) {
                     return searchResults;
+                } else {
+                    return await this.addInfluencer(searchResults.data);
                 }
-                return await this.addInfluencer(searchResults.data);//get influencer created and update the score, or calculate the score before save for only 1 request
             } else {
                 return {
                     statusCode: 200,
@@ -177,18 +167,32 @@ class InfluencerService {
 
     async searchInfluencerWithAI(params) {
         const { name, filter, claimsNumber, token } = params;
-        const searchResult = await perplexityService.searchInfluencer(name, filter, claimsNumber, token);
-        if (JSON.stringify(searchResult) === '{}') {
+        try {
+            const searchResult = await perplexityService.searchInfluencer(name, filter, claimsNumber, token);
+            if (searchResult.statusCode == 404) {
+                return {
+                    statusCode: 404,
+                    message: `${params.name} is not an knowled health influencer.`
+                };
+            }
+            if (searchResult.statusCode == 401) {
+                return {
+                    statusCode: 401,
+                    message: "token invalid"
+                }
+            }
+            if (searchResult.statusCode == 200) {
+                return {
+                    statusCode: 200,
+                    message: "success",
+                    data: searchResult.data
+                }
+            }
+        } catch (error) {
             return {
-                statusCode: 404,
-                message: `${params.name} is not an knowled health influencer.`,
-                data: {}
+                statusCode: 401,
+                message: `Invalid Token`
             };
-        }
-        return {
-            statusCode: 200,
-            message: "success",
-            data: searchResult.data
         }
     }
 
