@@ -46,21 +46,26 @@ class InfluencerService {
 
     async getInfluencerByName(params) {
         try {
-            const normalizedName = params.name.replace(/^Dr\. /, '').trim();
-            const influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${normalizedName}$`, 'i') } });
-            if (!influencer || influencer.length == 0) {
-                const searchResults = await this.searchInfluencerWithAI(params);
-                if (searchResults.statusCode != 200) {
-                    return searchResults;
-                } else {
-                    return await this.addInfluencer(searchResults.data);
-                }
-            } else {
+            const nameValidated = await perplexityService.validateInfluencerName(params.name, params.token);
+            if(nameValidated.statusCode != 200) {
                 return {
-                    statusCode: 200,
-                    message: "success",
-                    data: influencer
+                    statusCode: nameValidated.statusCode,
+                    message: nameValidated.message
+                };
+            }
+            const influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${nameValidated.data["name"]}$`, 'i') } });
+            if (!influencer) {
+                const searchResults = await this.searchInfluencerWithAI(params);
+                if (searchResults.statusCode != 200) {return searchResults;}
+                else {
+                    searchResults.data.name = nameValidated.data["name"];
+                    await this.addInfluencer(searchResults.data);
                 }
+            }
+            return {
+                statusCode: 200,
+                message: "success",
+                data: influencer
             }
         } catch (error) {
             return {

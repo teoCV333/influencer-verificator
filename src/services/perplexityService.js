@@ -2,22 +2,44 @@ const { parseAssistantResponse } = require("../utils/utils");
 
 class PerplexityService {
 
+  async validateInfluencerName(influencerName, token) {
+    const promptContent = `
+Role: Advanced API Query Assistant
+
+Task:
+Given a name, search for coincidences with real health influencers. If a match is found, return the following JSON object: 
+{"name": "<the name of the influencer>"}. 
+For example, if the input is "Dr. Andrew Huberman", the output should be the next JSON: {"name": "Andrew Huberman"}. 
+If no matches are found, return an empty JSON object: {}.
+
+Input:
+- Name to search: ${influencerName}
+
+Expected Output:
+- If a match is found, return: {"name": "<the name of the influencer>"}
+- If no match is found, return: {}
+    `;
+
+    const result = await this.generalRequest({ promptContent, token });
+    return result;
+  }
+
   async searchInfluencer(influencerName, dateFilter, numberOfClaims, token) {
     console.log(token)
     const promptContent = `
 Role: Advanced Research Assistant for Health and Medicine Influencers
 
 Task:
-Research and analyze content from ${influencerName} within a given date range, focusing on health and medicine-related categories. If the influencer is not health/medicine-related or if the name is invalid, return an empty JSON object: {}.
+Research and analyze content from ${influencerName} within a given date range, focusing on health and medicine-related categories. If the influencer name is invalid but there are coincidences or suggestions available, return the following JSON object: {"suggestion": "suggestion that you must provide"}. If the influencer is not health/medicine-related or if the name is invalid, return an empty JSON object: {}.
+
+For each claim, provide:
+- Verification Status
+- Source(s): List URLs and titles of reputable journals.
 
 Each claim must be verified against reliable scientific sources, categorized as follows:
 - Verified: Strong evidence from reputable sources.
 - Questionable: Insufficient evidence or anecdotal information.
 - Debunked: Proven false or misleading by credible sources.
-
-For each claim, provide:
-- Verification Status
-- Source(s): List URLs and titles of reputable journals.
 
 If you find the influencer return the results using this JSON format:
 {
@@ -58,12 +80,13 @@ Data to Retrieve (if health/medicine-related):
 - Description (5-line summary of title, affiliations, focus areas)
 - Follower Count (approximate total across all platforms, only a number example: 300000)
 - Claims (up to ${numberOfClaims}, ordered chronologically):
-  - Claim text
-  - Date posted
-  - Original post URL
-  - Related categories
-  - Verification Status
-  - Source(s)
+  - Claim text (required)
+  - AI analysis (short sentence, example: "Multiple studies confirm <claim text reference>. Timing window supported by research")
+  - Date posted (required)
+  - Original post URL (required)
+  - Related categories (required)
+  - Verification Status (required)
+  - Source(s) (required)
 
 If Non-Health Related Influencer:
 - Return an empty JSON object: {}
@@ -160,7 +183,7 @@ Each claim's verification status must be supported by reputable scientific sourc
       body: JSON.stringify({
         model: "llama-3.1-sonar-small-128k-online",
         messages: [
-          { role: "system", content: "Be precise and concise." },
+          { role: "system", content: "Be precise and concise. Do not correct or autocomplete the name of the influencer that the user provides you " },
           { role: "user", content: promptContent }
         ],
         temperature: 0.2,
@@ -174,27 +197,28 @@ Each claim's verification status must be supported by reputable scientific sourc
         frequency_penalty: 1,
       }),
     };
-      const response = await fetch('https://api.perplexity.ai/chat/completions', options);
-      if (!response.ok) {
+    const response = await fetch('https://api.perplexity.ai/chat/completions', options);
+    if (!response.ok) {
+      console.log(response)
+      return {
+        statusCode: 401,
+        message: "Invalid Token."
+      };
+    } else {
+      const data = await response.json();
+      const result = parseAssistantResponse(data.choices[0].message);
+      if (JSON.stringify(result) === '{}' || result.name == '') {
         return {
-          statusCode: 401,
-          message: "Invalid Token."
-        };
-      } else {
-        const data = await response.json();
-        const result = parseAssistantResponse(data.choices[0].message);
-        if(JSON.stringify(result) === '{}' || result.name == '') {
-          return {
-            statusCode: 404,
-            message: "Influencer not found."
-          };
-        }
-        return {
-          statusCode: 200,
-          message: "success",
-          data: result
+          statusCode: 404,
+          message: "Influencer not found."
         };
       }
+      return {
+        statusCode: 200,
+        message: "success",
+        data: result
+      };
+    }
   }
 }
 
