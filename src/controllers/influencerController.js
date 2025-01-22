@@ -32,7 +32,7 @@ class InfluencerController {
         }
     }
 
-    async getInfluencerByName(req, res) {
+    getInfluencerByName(req, res) {
         try {
             const params = {
                 name: req.params.name,
@@ -50,7 +50,7 @@ class InfluencerController {
                 };
             }
 
-            const influencer = await influencerService.getInfluencerByName(params);
+            const influencer = influencerService.getInfluencerByName(params);
 
             return genericResponse(res, influencer);
         } catch (err) {

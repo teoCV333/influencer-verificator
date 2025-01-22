@@ -44,29 +44,173 @@ class InfluencerService {
         }
     }
 
-    async getInfluencerByName(params) {
+    getInfluencerByName(params) {
         try {
-            const nameValidated = await perplexityService.validateInfluencerName(params.name, params.token);
-            if(nameValidated.statusCode != 200) {
+            /* const nameValidated = await perplexityService.validateInfluencerName(params.name, params.token);
+            if (nameValidated.statusCode != 200) {
                 return {
                     statusCode: nameValidated.statusCode,
                     message: nameValidated.message
                 };
             }
-            const influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${nameValidated.data["name"]}$`, 'i') } });
+            let influencer;
+                influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${nameValidated.data["name"]}$`, 'i') } });
             if (!influencer) {
                 const searchResults = await this.searchInfluencerWithAI(params);
-                if (searchResults.statusCode != 200) {return searchResults;}
+                if (searchResults.statusCode != 200) { return searchResults; }
                 else {
                     searchResults.data.name = nameValidated.data["name"];
-                    await this.addInfluencer(searchResults.data);
+                    influencer = await this.addInfluencer(searchResults.data);
                 }
             }
-            return {
-                statusCode: 200,
-                message: "success",
-                data: influencer
-            }
+            console.log(influencer); */
+            setTimeout(() => {
+                const influencer = {
+                    _id: "678e90aee8145dbcd25734a8",
+                    name: "Peter Attia",
+                    contentCategories: [
+                        "health",
+                        "medicine",
+                        "longevity",
+                        "nutrition",
+                        "exercise"
+                    ],
+                    description: "Dr. Peter Attia is a physician and podcaster focusing on health, longevity, and performance. He discusses various health topics, including nutrition, exercise, and critical thinking.",
+                    quantityFollowers: 469300,
+                    claims: [
+                        {
+                            claimText: "Comparing the impact of fitness and nutrition on lifespan and healthspan: data showing fitness to be a more significant predictor of mortality than nutrition.",
+                            datePosted: "2025-01-20T00:00:00.000Z",
+                            postUrl: "https://www.radio.net/podcast/thepeterattiadrive",
+                            categories: [
+                                "health",
+                                "nutrition"
+                            ],
+                            verificationStatus: "Verified",
+                            sources: [
+                                {
+                                    url: "https://www.radio.net/podcast/thepeterattiadrive",
+                                    title: "The Peter Attia Drive",
+                                    _id: "678e90aee8145dbcd25734aa"
+                                }
+                            ],
+                            _id: "678e90aee8145dbcd25734a9"
+                        },
+                        {
+                            claimText: "The myth of a ‘best diet,’ factors that determine the effectiveness of a diet, and data suggesting benefits of the Mediterranean diet.",
+                            datePosted: "2025-01-20T00:00:00.000Z",
+                            postUrl: "https://www.radio.net/podcast/thepeterattiadrive",
+                            categories: [
+                                "nutrition"
+                            ],
+                            verificationStatus: "Verified",
+                            sources: [
+                                {
+                                    url: "https://www.radio.net/podcast/thepeterattiadrive",
+                                    title: "The Peter Attia Drive",
+                                    _id: "678e90aee8145dbcd25734ac"
+                                }
+                            ],
+                            id: "678e90aee8145dbcd25734ab"
+                        },
+                        {
+                            claimText: "Practical considerations for individuals to identify the best diet for them: protein intake, energy balance, macronutrient adjustments, and micronutrient levels.",
+                            datePosted: "2025-01-20T00:00:00.000Z",
+                            postUrl: "https://www.radio.net/podcast/thepeterattiadrive",
+                            categories: [
+                                "nutrition"
+                            ],
+                            verificationStatus: "Verified",
+                            sources: [
+                                {
+                                    url: "https://www.radio.net/podcast/thepeterattiadrive",
+                                    title: "The Peter Attia Drive",
+                                    _id: "678e90aee8145dbcd25734ae"
+                                }
+                            ],
+                            _id: "678e90aee8145dbcd25734ad"
+                        },
+                        {
+                            claimText: "The effects of ultra-processed foods on health.",
+                            datePosted: "2025-01-20T00:00:00.000Z",
+                            postUrl: "https://www.radio.net/podcast/thepeterattiadrive",
+                            categories: [
+                                "nutrition"
+                            ],
+                            verificationStatus: "Verified",
+                            sources: [
+                                {
+                                    url: "https://www.radio.net/podcast/thepeterattiadrive",
+                                    title: "The Peter Attia Drive",
+                                    _id: "678e90aee8145dbcd25734b0"
+                                }
+                            ],
+                            _id: "678e90aee8145dbcd25734af"
+                        },
+                        {
+                            claimText: "Strategies to minimize microplastic exposure.",
+                            datePosted: "2025-01-20T00:00:00.000Z",
+                            postUrl: "https://peterattiamd.com/ama67/",
+                            categories: [
+                                "health",
+                                "microplastics"
+                            ],
+                            verificationStatus: "Verified",
+                            sources: [
+                                {
+                                    url: "https://peterattiamd.com/ama67/",
+                                    title: "#332 - AMA #67: Microplastics, PFAS, and phthalates",
+                                    _id: "678e90aee8145dbcd25734b2"
+                                }
+                            ],
+                            _id: "678e90aee8145dbcd25734b1"
+                        },
+                        {
+                            claimText: "The potential health risks of PFAS exposure.",
+                            datePosted: "2025-01-20T00:00:00.000Z",
+                            postUrl: "https://peterattiamd.com/ama67/",
+                            categories: [
+                                "health",
+                                "PFAS"
+                            ],
+                            verificationStatus: "Verified",
+                            sources: [
+                                {
+                                    url: "https://peterattiamd.com/ama67/",
+                                    title: "#332 - AMA #67: Microplastics, PFAS, and phthalates",
+                                    _id: "678e90aee8145dbcd25734b4"
+                                }
+                            ],
+                            _id: "678e90aee8145dbcd25734b3"
+                        },
+                        {
+                            claimText: "Practical steps to reduce exposure to phthalates in food, air, water, and personal care products.",
+                            datePosted: "2025-01-20T00:00:00.000Z",
+                            postUrl: "https://peterattiamd.com/ama67/",
+                            categories: [
+                                "health",
+                                "phthalates"
+                            ],
+                            verificationStatus: "Verified",
+                            sources: [
+                                {
+                                    url: "https://peterattiamd.com/ama67/",
+                                    title: "#332 - AMA #67: Microplastics, PFAS, and phthalates",
+                                    _id: "678e90aee8145dbcd25734b6"
+                                }
+                            ],
+                            _id: "678e90aee8145dbcd25734b5"
+                        }
+                    ],
+                    score: 200,
+                    __v: 0
+                }
+                return {
+                    statusCode: 200,
+                    message: "success",
+                    data: influencer
+                }
+            }, 3000);
         } catch (error) {
             return {
                 statusCode: 500,
