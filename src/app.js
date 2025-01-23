@@ -1,14 +1,14 @@
-const express = require("express");
-const app = require("express")();
-const cors = require("cors");
+import { json } from "express";
+import express from "express";
+const app = express();
+import cors from "cors";
 
-const influencerRouters = require("./routes/influencerRoutes");
+import routes from "./routes/index.js";
 
 app.use(cors())
-app.use(express.json());
-
+app.use(json());
 
 // Routes
-app.use("/api/influencer", influencerRouters);
+app.use("/api", routes);
 
-module.exports = app;
+export default app;

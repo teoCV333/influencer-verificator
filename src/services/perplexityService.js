@@ -1,6 +1,6 @@
-const { parseAssistantResponse } = require("../utils/utils");
+import { parseAssistantResponse } from "../utils/utils.js";
 
-class PerplexityService {
+export default class PerplexityService {
 
   async validateInfluencerName(influencerName, token) {
     const promptContent = `
@@ -221,5 +221,3 @@ Each claim's verification status must be supported by reputable scientific sourc
     }
   }
 }
-
-module.exports = new PerplexityService();

@@ -1,4 +1,4 @@
-function parseAssistantResponse(response) {
+export function parseAssistantResponse(response) {
     try {
         return JSON.parse(response.content);
     } catch {
@@ -22,4 +22,3 @@ function parseAssistantResponse(response) {
     }
 }
 
-module.exports = { parseAssistantResponse };

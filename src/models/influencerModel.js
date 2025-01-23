@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const sourceSchema = new mongoose.Schema({
+const sourceSchema = new Schema({
     url: { type: String, required: true },
     title: { type: String, required: true }
 });
 
-const claimSchema = new mongoose.Schema({
+const claimSchema = new Schema({
     claimText: { type: String, required: true },
     datePosted: { type: Date, required: true },
     postUrl: { type: String, required: true },
@@ -14,7 +14,7 @@ const claimSchema = new mongoose.Schema({
     sources: { type: [sourceSchema], required: true }
 });
 
-const influencerSchema = new mongoose.Schema({
+const influencerSchema = new Schema({
     name: { type: String, required: true },
     contentCategories: { type: [String], required: true },
     description: { type: String, required: true },
@@ -24,6 +24,4 @@ const influencerSchema = new mongoose.Schema({
 });
 
 // Create a model based on the influencer schema
-const Influencer = mongoose.model('Influencer', influencerSchema);
-
-module.exports = Influencer;
+export const Influencer = model('Influencer', influencerSchema);

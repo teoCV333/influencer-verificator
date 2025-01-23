@@ -1,5 +1,5 @@
-const Influencer = require("../models/influencerModel");
-const perplexityService = require("./perplexityService");
+import { Influencer } from "../models/influencerModel.js";
+import perplexityService from "./perplexityService.js";
 
 class InfluencerService {
 
@@ -365,4 +365,4 @@ class InfluencerService {
 
 }
 
-module.exports = new InfluencerService();
+export default new InfluencerService();

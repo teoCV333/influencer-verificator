@@ -1,9 +1,9 @@
-const influencerService = require("../services/influencerService");
-const { customHandleError } = require("../utils/errorHandler");
-const { getInfluencerByNameSchema, searchNewInfluencerClaimsSchema } = require("../validators/influencerValidator");
-const { genericResponse } = require("../utils/genericResponse");
+import influencerService from "../services/influencerService.js";
+import { customHandleError } from "../utils/errorHandler.js";
+import { getInfluencerByNameSchema, searchNewInfluencerClaimsSchema } from "../validators/influencerValidator.js";
+import { genericResponse } from "../utils/genericResponse.js";
 
-class InfluencerController {
+export default class InfluencerController {
 
     async addNewInfluencer(req, res) {
         try {
@@ -32,7 +32,7 @@ class InfluencerController {
         }
     }
 
-    getInfluencerByName(req, res) {
+    async getInfluencerByName(req, res) {
         try {
             const params = {
                 name: req.params.name,
@@ -50,7 +50,7 @@ class InfluencerController {
                 };
             }
 
-            const influencer = influencerService.getInfluencerByName(params);
+            const influencer = await influencerService.getInfluencerByName(params);
 
             return genericResponse(res, influencer);
         } catch (err) {
@@ -85,5 +85,3 @@ class InfluencerController {
     }
 
 }
-
-module.exports = new InfluencerController();

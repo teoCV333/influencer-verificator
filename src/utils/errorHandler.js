@@ -1,6 +1,6 @@
-const { genericResponse } = require("./genericResponse");
+import { genericResponse } from "./genericResponse.js";
 
-const customHandleError = (res, error) => {
+export const customHandleError = (res, error) => {
     console.error(error);
     result = {
         statusCode: error.status || 500,
@@ -9,5 +9,3 @@ const customHandleError = (res, error) => {
 
     return genericResponse(res, result);
 };
-
-module.exports = { customHandleError }
