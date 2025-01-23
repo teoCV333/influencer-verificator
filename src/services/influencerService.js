@@ -44,9 +44,9 @@ class InfluencerService {
         }
     }
 
-    getInfluencerByName(params) {
+    async getInfluencerByName(params) {
         try {
-            /* const nameValidated = await perplexityService.validateInfluencerName(params.name, params.token);
+            const nameValidated = await perplexityService.validateInfluencerName(params.name, params.token);
             if (nameValidated.statusCode != 200) {
                 return {
                     statusCode: nameValidated.statusCode,
@@ -54,7 +54,7 @@ class InfluencerService {
                 };
             }
             let influencer;
-                influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${nameValidated.data["name"]}$`, 'i') } });
+            influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${nameValidated.data["name"]}$`, 'i') } });
             if (!influencer) {
                 const searchResults = await this.searchInfluencerWithAI(params);
                 if (searchResults.statusCode != 200) { return searchResults; }
@@ -63,8 +63,8 @@ class InfluencerService {
                     influencer = await this.addInfluencer(searchResults.data);
                 }
             }
-            console.log(influencer); */
-            setTimeout(() => {
+            console.log(influencer);
+            /* setTimeout(() => {
                 const influencer = {
                     _id: "678e90aee8145dbcd25734a8",
                     name: "Peter Attia",
@@ -210,7 +210,13 @@ class InfluencerService {
                     message: "success",
                     data: influencer
                 }
-            }, 3000);
+            }, 3000); */
+            return {
+                stasusCode: 200,
+                message: "success",
+                data: influencer
+
+            }
         } catch (error) {
             return {
                 statusCode: 500,

@@ -1,11 +1,8 @@
-import { genericResponse } from "./genericResponse.js";
+import { ValidationError, ConnectionError, NotFoundError, AuthError } from "./errors";
 
-export const customHandleError = (res, error) => {
-    console.error(error);
-    result = {
-        statusCode: error.status || 500,
-        message: error.message || "Internal Error"
-    }
+export const errorHandler = {
+    NotFoundError: (() => {
 
-    return genericResponse(res, result);
-};
+    })
+}
+

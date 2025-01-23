@@ -1,5 +1,5 @@
 import influencerService from "../services/influencerService.js";
-import { customHandleError } from "../utils/errorHandler.js";
+import { handler } from "../utils/errorHandler.js";
 import { getInfluencerByNameSchema, searchNewInfluencerClaimsSchema } from "../validators/influencerValidator.js";
 import { genericResponse } from "../utils/genericResponse.js";
 
@@ -10,7 +10,7 @@ export default class InfluencerController {
             const influencer = await influencerService.addInfluencer();
             return genericResponse(res, influencer);
         } catch (err) {
-            return customHandleError(res, err);
+            return handler(res, err);
         }
     }
 
