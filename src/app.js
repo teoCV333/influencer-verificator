@@ -9,6 +9,6 @@ app.use(express.json());
 
 
 // Routes
-app.use("/", influencerRouters);
+app.use("/api/influencer", influencerRouters);
 
 module.exports = app;
