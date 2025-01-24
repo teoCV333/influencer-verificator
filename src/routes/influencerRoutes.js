@@ -7,6 +7,6 @@ router.post("/", influencerController.addNewInfluencer);
 router.get("/", influencerController.getAllInfluencers);
 router.get("/:name", influencerController.getInfluencerByName);
 router.get("/profile/:id", influencerController.getInfluencerById);
-router.get("/new-claims/:id", influencerController.searchNewInfluencerClaims);
-
+/* router.get("/new-claims/:id", influencerController.searchNewInfluencerClaims);
+ */
 module.exports = router;

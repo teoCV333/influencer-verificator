@@ -7,11 +7,7 @@ class InfluencerService {
         try {
             const score = this.calculateScore(influencer.claims);
             const influencerCreated = await Influencer.create({ ...influencer, score: score });
-            return {
-                statusCode: 200,
-                message: "success",
-                data: await Influencer.findById(influencerCreated._id)
-            };
+            return influencerCreated    
         } catch (error) {
             return {
                 statusCode: 500,
@@ -44,27 +40,26 @@ class InfluencerService {
         }
     }
 
-    getInfluencerByName(params) {
+    async getInfluencerByName(params) {
         try {
-            /* const nameValidated = await perplexityService.validateInfluencerName(params.name, params.token);
+            const nameValidated = await perplexityService.validateInfluencerName(params.name, params.token);
             if (nameValidated.statusCode != 200) {
                 return {
                     statusCode: nameValidated.statusCode,
                     message: nameValidated.message
                 };
             }
-            let influencer;
-                influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${nameValidated.data["name"]}$`, 'i') } });
+            let influencer = await Influencer.findOne({ name: { $regex: new RegExp(`^${nameValidated.data["name"]}$`, 'i') } });
+                 
             if (!influencer) {
                 const searchResults = await this.searchInfluencerWithAI(params);
-                if (searchResults.statusCode != 200) { return searchResults; }
+                if (searchResults.statusCode != 200 || !searchResults.data["description"]) { return searchResults; }
                 else {
                     searchResults.data.name = nameValidated.data["name"];
                     influencer = await this.addInfluencer(searchResults.data);
                 }
             }
-            console.log(influencer); */
-            setTimeout(() => {
+            /* setTimeout(() => {
                 const influencer = {
                     _id: "678e90aee8145dbcd25734a8",
                     name: "Peter Attia",
@@ -210,7 +205,12 @@ class InfluencerService {
                     message: "success",
                     data: influencer
                 }
-            }, 3000);
+            }, 3000); */
+            return {
+                statusCode: 200,
+                message: "success",
+                data: influencer
+            }
         } catch (error) {
             return {
                 statusCode: 500,
@@ -310,7 +310,6 @@ class InfluencerService {
             totalClaims++;
         });
         const score = ((((verified * 2) - (debunked * 3)) / totalClaims) * 100);
-        console.log(score);
         return score;
     }
 
@@ -323,6 +322,12 @@ class InfluencerService {
                     statusCode: 404,
                     message: `${params.name} is not an knowled health influencer.`
                 };
+            }
+            if (searchResult.data["description"] == '' || !searchResult.data["description"]) {
+                return {
+                    statusCode: 422,
+                    message: "don't found any content for this influencer"
+                } 
             }
             if (searchResult.statusCode == 401) {
                 return {
@@ -339,8 +344,8 @@ class InfluencerService {
             }
         } catch (error) {
             return {
-                statusCode: 401,
-                message: `Invalid Token`
+                statusCode: 500,
+                message: `Internal Error`
             };
         }
     }

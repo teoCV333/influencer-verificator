@@ -1,6 +1,6 @@
 const influencerService = require("../services/influencerService");
 const { customHandleError } = require("../utils/errorHandler");
-const { getInfluencerByNameSchema, searchNewInfluencerClaimsSchema } = require("../validators/influencerValidator");
+const { getInfluencerByNameSchema } = require("../validators/influencerValidator");
 const { genericResponse } = require("../utils/genericResponse");
 
 class InfluencerController {
@@ -10,7 +10,7 @@ class InfluencerController {
             const influencer = await influencerService.addInfluencer();
             return genericResponse(res, influencer);
         } catch (err) {
-            return customHandleError(res, err);
+            return res.status(err.statusCode).json();
         }
     }
 
@@ -32,7 +32,7 @@ class InfluencerController {
         }
     }
 
-    getInfluencerByName(req, res) {
+    async getInfluencerByName(req, res) {
         try {
             const params = {
                 name: req.params.name,
@@ -42,23 +42,23 @@ class InfluencerController {
             }
 
             const { error } = getInfluencerByNameSchema.validate(params);
+            
+            let result = await influencerService.getInfluencerByName(params);
 
             if (error) {
-                return {
+                result = {
                     statusCode: 401,
                     message: error.details[0].message
                 };
             }
 
-            const influencer = influencerService.getInfluencerByName(params);
-
-            return genericResponse(res, influencer);
+            return genericResponse(res, result);
         } catch (err) {
-            return customHandleError(res, err);
+            return res.status(err.statusCode).json();
         }
     }
 
-    async searchNewInfluencerClaims(req, res) {
+    /* async searchNewInfluencerClaims(req, res) {
         try {
             const params = {
                 id: req.params.id,
@@ -82,7 +82,7 @@ class InfluencerController {
         } catch (err) {
             return customHandleError(res, err);
         }
-    }
+    } */
 
 }
 

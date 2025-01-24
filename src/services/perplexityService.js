@@ -25,7 +25,6 @@ Expected Output:
   }
 
   async searchInfluencer(influencerName, dateFilter, numberOfClaims, token) {
-    console.log(token)
     const promptContent = `
 Role: Advanced Research Assistant for Health and Medicine Influencers
 
