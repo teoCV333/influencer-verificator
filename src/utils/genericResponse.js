@@ -1,11 +1,7 @@
-export function genericResponse(res, results) {
-    const { data, statusCode, message } = results;
-    response = {
-        status: {
-            code: statusCode,
-            message,
-        },
-        data: data || {},
-    };
-    return res.status(statusCode).json(response);
+export function genericResponse(res, data) {
+  res.status(200).json({
+    success: true,
+    data: data || {},
+    message: null,
+  });
 }

@@ -1,5 +1,5 @@
 const createErrorFactory = function (name) {
-    return class CustomEerror extends Error {
+    return class CustomError extends Error {
         constructor(message) {
             super(message);
             this.name = name;

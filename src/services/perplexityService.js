@@ -1,7 +1,7 @@
+import { AuthError, NotFoundError } from "../utils/errors.js";
 import { parseAssistantResponse } from "../utils/utils.js";
 
 export default class PerplexityService {
-
   async validateInfluencerName(influencerName, token) {
     const promptContent = `
 Role: Advanced API Query Assistant
@@ -20,12 +20,11 @@ Expected Output:
 - If no match is found, return: {}
     `;
 
-    const result = await this.generalRequest({ promptContent, token });
-    return result;
+    return await this.generalRequest({ promptContent, token });
   }
 
   async searchInfluencer(influencerName, dateFilter, numberOfClaims, token) {
-    console.log(token)
+    console.log(token);
     const promptContent = `
 Role: Advanced Research Assistant for Health and Medicine Influencers
 
@@ -97,11 +96,20 @@ Notes:
 - Ensure claims are ordered from most recent to oldest.
 `;
 
-    const result = await this.generalRequest({ promptContent, dateFilter, token });
+    const result = await this.generalRequest({
+      promptContent,
+      dateFilter,
+      token,
+    });
     return result;
   }
 
-  async searchClaimsByInfluencer(influencerName, dateFilter, numberOfClaims, token) {
+  async searchClaimsByInfluencer(
+    influencerName,
+    dateFilter,
+    numberOfClaims,
+    token
+  ) {
     const promptContent = `
 Role: Advanced Research Assistant for Health and Medicine Influencers
 
@@ -168,23 +176,30 @@ Claims must be ordered chronologically, from the most recent claim to the oldest
 Each claim's verification status must be supported by reputable scientific sources, and the verification status should be updated accordingly (Verified, Questionable, Debunked).
 
 `;
-    const result = await this.generalRequest({ promptContent, dateFilter, token });
+    const result = await this.generalRequest({
+      promptContent,
+      dateFilter,
+      token,
+    });
     return result;
   }
 
   async generalRequest({ promptContent, dateFilter, token }) {
-
     const options = {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         model: "llama-3.1-sonar-small-128k-online",
         messages: [
-          { role: "system", content: "Be precise and concise. Do not correct or autocomplete the name of the influencer that the user provides you " },
-          { role: "user", content: promptContent }
+          {
+            role: "system",
+            content:
+              "Be precise and concise. Do not correct or autocomplete the name of the influencer that the user provides you ",
+          },
+          { role: "user", content: promptContent },
         ],
         temperature: 0.2,
         top_p: 0.9,
@@ -197,27 +212,20 @@ Each claim's verification status must be supported by reputable scientific sourc
         frequency_penalty: 1,
       }),
     };
-    const response = await fetch('https://api.perplexity.ai/chat/completions', options);
+    const response = await fetch(
+      "https://api.perplexity.ai/chat/completions",
+      options
+    );
     if (!response.ok) {
-      console.log(response)
-      return {
-        statusCode: 401,
-        message: "Invalid Token."
-      };
+      console.log(response);
+      throw new AuthError("Token invalid.");
     } else {
       const data = await response.json();
       const result = parseAssistantResponse(data.choices[0].message);
-      if (JSON.stringify(result) === '{}' || result.name == '') {
-        return {
-          statusCode: 404,
-          message: "Influencer not found."
-        };
+      if (JSON.stringify(result) === "{}" || result.name == "") {
+        throw new NotFoundError("Influencer not found.");
       }
-      return {
-        statusCode: 200,
-        message: "success",
-        data: result
-      };
+      return result;
     }
   }
 }
