@@ -28,9 +28,7 @@ export default class InfluencerController {
 
   async getInfluencerById(req, res) {
     try {
-      const influencer = await influencerService.getInfluencerById(
-        req.params.id
-      );
+      const influencer = await influencerService.getInfluencerById(req.params.id);
       return genericResponse(res, influencer);
     } catch (err) {
       errorHandler(res, err);

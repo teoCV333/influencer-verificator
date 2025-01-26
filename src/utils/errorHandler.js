@@ -20,9 +20,16 @@ export const errorHandler = (res, error) => {
     },
   };
   //error with status
-  res.status(errors[error.name].status || 500).json({
+  if (!errors[error.name]) {
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: 'Internal error',
+    });
+  }
+  res.status(errors[error.name].status).json({
     success: false,
     data: null,
-    message: errors[error.name].message || "Internal error",
+    message: errors[error.name].message,
   });
 };
