@@ -24,7 +24,6 @@ Expected Output:
   }
 
   async searchInfluencer(influencerName, dateFilter, numberOfClaims, token) {
-    console.log(token);
     const promptContent = `
 Role: Advanced Research Assistant for Health and Medicine Influencers
 
@@ -217,7 +216,6 @@ Each claim's verification status must be supported by reputable scientific sourc
       options
     );
     if (!response.ok) {
-      console.log(response);
       throw new AuthError("Token invalid.");
     } else {
       const data = await response.json();
