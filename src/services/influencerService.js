@@ -1,6 +1,10 @@
 import { Influencer } from "../models/influencerModel.js";
 import PerplexityService from "./perplexityService.js";
-import { ConnectionError, NotFoundError } from "../utils/errors.js";
+import {
+  ConnectionError,
+  DuplicateError,
+  NotFoundError,
+} from "../utils/errors.js";
 import mongoose from "mongoose";
 
 class InfluencerService {
@@ -8,18 +12,19 @@ class InfluencerService {
   async addInfluencer(influencer) {
     const score = this.calculateScore(influencer.claims);
     //search duplicates
+    let influencerCreated;
     try {
-      const influencerCreated = await Influencer.create({
+      influencerCreated = await Influencer.create({
         ...influencer,
         score: score,
       });
     } catch (err) {
-      console.log("error in addIndluencer:", err);
-      //HANDLE ERROR
-      return;
+      if (err.code && err.code === 11000) {
+        throw new DuplicateError("Influencer already exist.");
+      }
+      throw new ConnectionError("Internal Error");
     }
-
-    return await Influencer.findById(influencerCreated._id);
+    return influencerCreated;
   }
 
   async getAllInfluencers() {

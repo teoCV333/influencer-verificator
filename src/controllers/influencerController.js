@@ -10,7 +10,7 @@ import { ValidationError } from "../utils/errors.js";
 export default class InfluencerController {
   async addNewInfluencer(req, res) {
     try {
-      const influencer = await influencerService.addInfluencer();
+      const influencer = await influencerService.addInfluencer(req.body);
       return genericResponse(res, influencer);
     } catch (err) {
       errorHandler(res, err);
@@ -28,7 +28,9 @@ export default class InfluencerController {
 
   async getInfluencerById(req, res) {
     try {
-      const influencer = await influencerService.getInfluencerById(req.params.id);
+      const influencer = await influencerService.getInfluencerById(
+        req.params.id
+      );
       return genericResponse(res, influencer);
     } catch (err) {
       errorHandler(res, err);

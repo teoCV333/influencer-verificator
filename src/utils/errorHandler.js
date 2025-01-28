@@ -1,35 +1,38 @@
-import { genericResponse } from "../utils/genericResponse.js";
-
 export const errorHandler = (res, error) => {
   const errors = {
-    ConnectionError: {
-      status: 500,
-      message: `ConnectionError: ${error.message}`,
-    },
-    ValidationError: {
-      status: 422,
-      message: `ValidationError: ${error.message}`,
+    AuthError: {
+      status: 401,
+      message: `AuthError: ${error.message}`,
     },
     NotFoundError: {
       status: 404,
       message: `NotFoundError: ${error.message}`,
     },
-    AuthError: {
-      status: 401,
-      message: `AuthError: ${error.message}`,
+    DuplicateError: {
+      status: 409,
+      message: `DuplicateError: ${error.message}`,
+    },
+    ValidationError: {
+      status: 422,
+      message: `ValidationError: ${error.message}`,
+    },
+    ConnectionError: {
+      status: 500,
+      message: `ConnectionError: ${error.message}`,
     },
   };
-  //error with status
-  if (!errors[error.name]) {
+
+  try {
+    res.status(errors[error.name].status).json({
+      success: false,
+      data: null,
+      message: errors[error.name].message,
+    });
+  } catch (error) {
     res.status(500).json({
       success: false,
       data: null,
-      message: 'Internal error',
+      message: "Internal error",
     });
   }
-  res.status(errors[error.name].status).json({
-    success: false,
-    data: null,
-    message: errors[error.name].message,
-  });
 };
