@@ -32,7 +32,7 @@ export const errorHandler = (res, error) => {
     res.status(500).json({
       success: false,
       data: null,
-      message: "Internal error",
+      message: "Internal error.",
     });
   }
 };
